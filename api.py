@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from openai import OpenAI
 from dotenv import load_dotenv
 import os
-
+from supabase_client import supabase
 from database import conn, cursor
 
 load_dotenv()
@@ -54,12 +54,11 @@ Keep it clean, modern, and startup-style.
 
     result = response.choices[0].message.content
 
-    cursor.execute(
-        "INSERT INTO history (prompt, result) VALUES (?, ?)",
-        (prompt, result)
-    )
-
-    conn.commit()
+    supabase.table("history").insert({
+        "email": "demo@user.com",
+        "prompt": prompt,
+        "result": result
+    }).execute()
 
     return {
         "result": result
@@ -68,18 +67,8 @@ Keep it clean, modern, and startup-style.
 @app.get("/history")
 def get_history():
 
-    cursor.execute(
-        "SELECT prompt, result FROM history ORDER BY id DESC"
-    )
+    response = supabase.table("history") \
+        .select("*") \
+        .execute()
 
-    rows = cursor.fetchall()
-
-    history = []
-
-    for row in rows:
-        history.append({
-            "prompt": row[0],
-            "result": row[1]
-        })
-
-    return history
+    return response.data
