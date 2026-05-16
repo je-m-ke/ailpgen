@@ -21,7 +21,7 @@ if st.button("Generate Landing Page Copy"):
     with st.spinner("Generating..."):
 
         response = requests.get(
-            "http://127.0.0.1:8000/generate",
+            "https://ailpgen.onrender.com/generate",
             params={
             "prompt": prompt,
              "style": style
@@ -37,7 +37,7 @@ if st.button("Generate Landing Page Copy"):
     
 if st.button("Show History"):
 
-        history = requests.get("http://127.0.0.1:8000/history")
+        history = requests.get("https://ailpgen.onrender.com/history")
 
         history_data = history.json()
 
